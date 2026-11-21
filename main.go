@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 func main() {
-	// Insecure: certificate verification is disabled, which should be
-	// flagged by CodeQL's go/disabled-certificate-check query.
+	// Verification stays enabled unless TLS_SKIP_VERIFY is set to a true value.
+	skipVerify, _ := strconv.ParseBool(os.Getenv("TLS_SKIP_VERIFY"))
+
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: skipVerify},
 	}
 	client := &http.Client{Transport: tr}
 
